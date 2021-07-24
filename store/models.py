@@ -55,7 +55,8 @@ class Order(models.Model):
 
 class Address(models.Model):
     street = CharField(max_length=255)
-    city = CharField(max_length=255)
+    city = CharField(max_length=255, null=True)
+    zip = CharField(max_length=10)
     customer = ForeignKey(Customer, on_delete=models.CASCADE)
 
 
