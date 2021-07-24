@@ -1,4 +1,3 @@
-from typing_extensions import NotRequired
 from django.db import models
 from django.db.models.base import Model
 from django.db.models.deletion import CASCADE
@@ -10,6 +9,14 @@ from django.db.models.fields.related import ForeignKey
 
 class Collection(models.Model):
     title = CharField(max_length=255)
+    featured_product = models.ForeignKey(
+        'Product', on_delete=models.SET_NULL, null=True,
+        related_name='+')
+
+
+class Promotion(models.Model):
+    description = models.CharField(max_length=255)
+    discount = models.FloatField()
 
 
 class Product(models.Model):
@@ -19,6 +26,7 @@ class Product(models.Model):
     inventory = models.IntegerField()
     last_update = models.DateTimeField(auto_now=True)
     collection = ForeignKey(Collection, on_delete=models.PROTECT)
+    promotion = models.ManyToManyField(Promotion)
 
 
 class Customer(models.Model):
@@ -51,14 +59,14 @@ class Address(models.Model):
 
 
 class OrderItem(models.Model):
-    order = ForeignKey(Order, on_delect=models.PROTECT)
-    product = models.ForeignKey(Product, on_delect=models.PROTECT)
+    order = ForeignKey(Order, on_delete=models.PROTECT)
+    product = models.ForeignKey(Product, on_delete=models.PROTECT)
     quantity = models.PositiveSmallIntegerField()
     unit_price = models.DecimalField(max_digits=6, decimal_places=2)
 
 
 class Cart(models.Model):
-    create_at = models.DateTimeField(auto_now_add=Ture)
+    create_at = models.DateTimeField(auto_now_add=True)
 
 
 class CartItem(models.Model):
