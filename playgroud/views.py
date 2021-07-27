@@ -35,7 +35,20 @@ def say_hello(request):
 
     # queryset = Product.objects.values('id', 'title', 'collection__title')
     # queryset = Product.objects.values_list('id', 'title', 'collection__title')
-    queryset = Product.objects.filter(
-        id__in=OrderItem.objects.values('product__id').distinct())
 
-    return render(request, "hello.html", {"name": "mosh", "products": list(queryset)})
+    # queryset = Product.objects.filter(
+    #     id__in=OrderItem.objects.values('product__id').distinct()).order_by('title')
+
+    # queryset = Product.objects.only('id', 'title')
+
+    # queryset = Product.objects.defer('description')
+
+    # queryset = Product.objects.select_related('collection').all()
+
+    # queryset = Product.objects.select_related(
+    #     'collection').prefetch_related('promotions').all()
+
+    queryset = Order.objects.select_related(
+        'customer').prefetch_related('orderitem_set__product').order_by('-placed_at')[0:5]
+
+    return render(request, "hello.html", {"name": "mosh", "orders": list(queryset)})
