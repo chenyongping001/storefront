@@ -2,7 +2,7 @@ from typing import Collection
 from django.db.models import Q, F
 from django.shortcuts import render
 from django.http import HttpResponse
-from store.models import Customer, Order, OrderItem, Product, Collection
+from store.models import Cart, CartItem, Customer, Order, OrderItem, Product, Collection
 from django.db.models.aggregates import Count, Max, Min, Avg, Sum
 
 # Create your views here.
@@ -71,32 +71,44 @@ def say_hello(request):
     #         avg_price=Avg('unit_price'),
     # )
 
-    results = Customer.objects.annotate(
-        last_order_id=Max('order__id')
-    )
+    # results = Customer.objects.annotate(
+    #     last_order_id=Max('order__id')
+    # )
 
-    results = Collection.objects.annotate(
-        products_count=Count('product')
-    )
+    # results = Collection.objects.annotate(
+    #     products_count=Count('product')
+    # )
 
-    results = Customer.objects.annotate(
-        order_count=Count('order')
-    ).filter(
-        order_count__gt=5
-    )
+    # results = Customer.objects.annotate(
+    #     order_count=Count('order')
+    # ).filter(
+    #     order_count__gt=5
+    # )
 
-    results = Customer.objects.annotate(
-        total_spent=Sum(
-            F('order__orderitem__unit_price') *
-            F('order_orderitem_quantity')
-        )
-    )
+    # results = Customer.objects.annotate(
+    #     total_spent=Sum(
+    #         F('order__orderitem__unit_price') *
+    #         F('order_orderitem_quantity')
+    #     )
+    # )
 
-    results = Product.objects.annotate(
-        total_sales=Sum(
-            F('orderitem__quantity') *
-            F('orderitem__unit_price')
-        )
-    ).order_by('-total_sales')[:5]
+    # results = Product.objects.annotate(
+    #     total_sales=Sum(
+    #         F('orderitem__quantity') *
+    #         F('orderitem__unit_price')
+    #     )
+    # ).order_by('-total_sales')[:5]
 
-    return render(request, "hello.html", {"name": "mosh", "results": list(results)})
+    cart = Cart()
+    cart.save()
+    cartitem = CartItem()
+    cartitem.product_id = 1
+    cartitem.quantity = 2
+    cartitem.cart = cart
+    cartitem.save()
+
+    item1 = CartItem.objects.get(pk=1)
+    item1.quantity = 3
+    item1.save()
+
+    return render(request, "hello.html", {"name": "mosh", })
