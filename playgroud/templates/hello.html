@@ -1,20 +1,15 @@
 <html>
+  <body>
+    {% if name %}
+    <h2>Hello, {{ name }}</h2>
+    {% else %}
+    <h2>Hello, World</h2>
+    {% endif %}
 
-<body>
-  {% if name %}
-  <h2>Hello, {{ name }}</h2>
-  {% else %}
-  <h2>Hello, World</h2>
-  {% endif %}
-  {{result}}
-  <!-- <ul> -->
-  <!-- {% for product in products %}
-    <li>{{ product.title }} ${{ product.collection.title }}</li>
-    {% endfor %} -->
-  <!-- {% for order in orders %}
-    <li>{{ order.id }} - {{ order.customer.first_name }}</li>
-    {% endfor %} -->
-  <!-- </ul> -->
-</body>
-
+    <ul>
+      {% for result in results %}
+      <li>{{ result }}</li>
+      {% endfor %} -->
+    </ul>
+  </body>
 </html>

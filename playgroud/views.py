@@ -54,20 +54,49 @@ def say_hello(request):
 
     # return render(request, "hello.html", {"name": "mosh", "orders": list(queryset)})
 
-    result = Product.objects.aggregate(
-        count=Count('id'), min_price=Min('unit_price'))
+    # result = Product.objects.aggregate(
+    #     count=Count('id'), min_price=Min('unit_price'))
 
-    result = Order.objects.aggregate(count=Count('id'))
+    # result = Order.objects.aggregate(count=Count('id'))
 
-    result = OrderItem.objects.filter(
-        product__id=1).aggregate(units_sold=Sum('quantity'))
+    # result = OrderItem.objects.filter(
+    #     product__id=1).aggregate(units_sold=Sum('quantity'))
 
-    result = Order.objects.filter(customer__id=1).aggregate(count=Count('id'))
+    # result = Order.objects.filter(customer__id=1).aggregate(count=Count('id'))
 
-    result = Product.objects.filter(collection__id=3)\
-        .aggregate(
-            min_price=Min('unit_price'),
-            max_price=Max('unit_price'),
-            avg_price=Avg('unit_price'),
+    # result = Product.objects.filter(collection__id=3)\
+    #     .aggregate(
+    #         min_price=Min('unit_price'),
+    #         max_price=Max('unit_price'),
+    #         avg_price=Avg('unit_price'),
+    # )
+
+    results = Customer.objects.annotate(
+        last_order_id=Max('order__id')
     )
-    return render(request, "hello.html", {"name": "mosh", "result": result})
+
+    results = Collection.objects.annotate(
+        products_count=Count('product')
+    )
+
+    results = Customer.objects.annotate(
+        order_count=Count('order')
+    ).filter(
+        order_count__gt=5
+    )
+
+    results = Customer.objects.annotate(
+        total_spent=Sum(
+            F('order__orderitem__unit_price') *
+            F('order_orderitem_quantity')
+        )
+    )
+
+    results = Product.objects.annotate(
+        total_sales=Sum(
+            F('orderitem__quantity') *
+            F('orderitem__unit_price')
+        )
+    ).order_by('-total_sales')[:5]
+
+    return render(request, "hello.html", {"name": "mosh", "results": list(results)})
