@@ -22,3 +22,6 @@ urlpatterns = [
     path("playgroud/", include("playgroud.urls")),
     path('__debug__/', include(debug_toolbar.urls)),
 ]
+
+admin.site.site_header = 'Storefront Admin'
+admin.site.index_title = 'Admin'
