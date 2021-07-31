@@ -41,7 +41,6 @@ class InventoryFilter(admin.SimpleListFilter):
         if self.value() == '<10':
             return queryset.filter(inventory__lt=10)
 
-
 @admin.register(models.Product)
 class ProductAdmin(admin.ModelAdmin):
     actions = ['clear_inventory']
@@ -50,6 +49,7 @@ class ProductAdmin(admin.ModelAdmin):
         'slug': ['title']
     }
     autocomplete_fields = ['collection']
+    search_fields = ['title']
 
     list_display = ['title', 'unit_price',
                     'inventory_status', 'collection_title']
@@ -100,8 +100,17 @@ class CustomerAdmin(admin.ModelAdmin):
         )
 
 
+class OrderItemInline(admin.TabularInline):
+    model = models.OrderItem
+    autocomplete_fields = ['product']
+    extra = 0
+    min_num = 1
+    max_num = 10
+
+
 @admin.register(models.Order)
 class OrderAdmin(admin.ModelAdmin):
     autocomplete_fields = ['customer']
+    inlines = [OrderItemInline]
     list_display = ['id', 'placed_at', 'customer']
     list_per_page = 10
